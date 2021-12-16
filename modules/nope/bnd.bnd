@@ -1,0 +1,4 @@
+Bundle-Name: nope
+Bundle-SymbolicName: nope
+Bundle-Version: 1.0.0
+Export-Package: nope.constants
