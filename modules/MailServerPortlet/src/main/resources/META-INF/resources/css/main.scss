@@ -1,4 +1,9 @@
 .mail-server-portlet{
   background-color: white;
   padding: 15px;
+  table.headers {
+    tr {
+      font-size: small;
+    }
+  }
 }

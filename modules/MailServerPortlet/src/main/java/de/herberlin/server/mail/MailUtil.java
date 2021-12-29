@@ -14,34 +14,50 @@ import java.util.regex.Pattern;
  */
 public class MailUtil {
 
-    private static final Pattern pattern = Pattern.compile(".*(=\\w{2}).*", Pattern.DOTALL);
+    private static final Pattern pattern_long = Pattern.compile(".*(=[Cc][2-9]=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
+    private static final Pattern pattern_short = Pattern.compile(".*(=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
 
-    /**
-     * TODO: Fix this;
-     * Two diget characters are not recognized.
-     * Replacement of equal - sign (=) fails, tries to replace it once more
-     */
+
     public static String decodeQuotedPrintableLine(String aLine) {
         if (aLine == null) {
             return aLine;
         }
+        boolean isSubject = aLine.contains("=?UTF-8?Q?");
+        if (isSubject) {
+            aLine = aLine.replaceAll("=\\?UTF-8\\?Q\\?", ""); // utf-8 header in subject and addresses
+            aLine = aLine.replaceAll("\\?=", "");
+            aLine = aLine.replaceAll("_", " ");
+
+        }
+
         if (aLine.endsWith("=")) {
             aLine = aLine.substring(0, aLine.length() - 1);
-        } else {
+        } else if (!isSubject) {
             aLine += "\n"; // Shorter lines need a real linebreak;
         }
+
         boolean match = false;
         try {
             do {
-                Matcher matcher = pattern.matcher(aLine);
+                Matcher matcher = pattern_long.matcher(aLine);
                 match = matcher.matches() && matcher.groupCount() > 0;
                 if (match) {
                     String m = matcher.group(1);
-                    String mm = m.replaceAll("=C3", "");
-                    mm = mm.replaceAll("=", "");
-                    int val = Integer.valueOf(mm, 16);
-                    String replacement = String.valueOf((char) val);
+                    int val = Integer.valueOf(m.substring(4), 16);
+                    int factor = Integer.valueOf(m.substring(2,3))-2;
+                    String replacement = String.valueOf((char) (val+(64*factor)));
                     aLine = aLine.replaceFirst(m, replacement);
+
+                } else {
+                    matcher = pattern_short.matcher(aLine);
+                    match = matcher.matches() && matcher.groupCount() > 0;
+                    if (match) {
+                        String m = matcher.group(1);
+                        int val = Integer.valueOf(m.substring(1), 16);
+                        String replacement = String.valueOf((char) val);
+                        aLine = aLine.replaceFirst(m, replacement);
+                    }
+
                 }
 
             } while (match);
@@ -56,11 +72,5 @@ public class MailUtil {
         return new String(result);
     }
 
-    // Da muss vermutlich ein eigener algorithmus etwickelt werden
-    // https://www.utf8-zeichentabelle.de/unicode-utf8-table.pl
-    public static void main(String[] args) {
-        String s = "du hast gerade die E-Mailben=B6chrichtigungen in der Jobb=C3=B6rse abonniert.";
-        Integer.valueOf("c3b6");
-        String result = MailUtil.decodeQuotedPrintableLine(s);
-    }
+
 }

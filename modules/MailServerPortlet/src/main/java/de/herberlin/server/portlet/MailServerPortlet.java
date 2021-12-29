@@ -29,6 +29,7 @@ import de.herberlin.server.portlet.mailserver.Testmail;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class MailServerPortlet extends MVCPortlet implements ServerEventListener
 
 
     private static MailServer _server = null;
-    private static List<EventWrapper> c_eventList = new LinkedList<EventWrapper>();
+    private static List<EventWrapper> c_eventList = Collections.synchronizedList(new LinkedList<EventWrapper>());
 
     protected Log getLog() {
         return LogFactoryUtil.getLog(getClass());

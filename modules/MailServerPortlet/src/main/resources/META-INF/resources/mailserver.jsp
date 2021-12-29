@@ -49,18 +49,20 @@
 		<c:forEach var="event" items="${eventList}" varStatus="varStatus">
 		
 			<div class="mail-server-portlet-mail" >
-				<strong><c:out value="${event.date}"/> : 
-				<c:out value="${event.from}"/> :
-				<c:out value="${event.subject}"/> </strong>
+				<strong><c:out value="${event.date}"/></strong>
 				<div id="row-${varStatus.index}">
 						
 							<dl  style="margin:5px 0px 10px 18px">
+								<dt>From</dt>
+								<dd><c:out value="${event.from}"/></dd>
+								<dt>Subject</dt>
+								<dd><c:out value="${event.subject}"/></dd>
 								<dt>Recipients</dt>
 								<dd><c:out value="${event.to}"/></dd>
 
 								<dt>Header</dt>
 								<dd>
-									<table>
+									<table class="headers">
 							<c:forEach var="entry" items="${event.mailHeader.headers}">
 								<tr>
 									<td><c:out value="${entry.key }" />&nbsp;</td>
