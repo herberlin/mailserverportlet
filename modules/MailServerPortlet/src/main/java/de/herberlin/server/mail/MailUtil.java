@@ -16,7 +16,7 @@ public class MailUtil {
 
     private static final Pattern pattern_long = Pattern.compile(".*(=[Cc][2-9]=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
     private static final Pattern pattern_short = Pattern.compile(".*(=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
-
+    private static final String EQUALS = "=3D";
 
     public static String decodeQuotedPrintableLine(String aLine) {
         if (aLine == null) {
@@ -44,8 +44,8 @@ public class MailUtil {
                 if (match) {
                     String m = matcher.group(1);
                     int val = Integer.valueOf(m.substring(4), 16);
-                    int factor = Integer.valueOf(m.substring(2,3))-2;
-                    String replacement = String.valueOf((char) (val+(64*factor)));
+                    int factor = Integer.valueOf(m.substring(2, 3)) - 2;
+                    String replacement = String.valueOf((char) (val + (64 * factor)));
                     aLine = aLine.replaceFirst(m, replacement);
 
                 } else {
@@ -53,14 +53,16 @@ public class MailUtil {
                     match = matcher.matches() && matcher.groupCount() > 0;
                     if (match) {
                         String m = matcher.group(1);
-                        int val = Integer.valueOf(m.substring(1), 16);
-                        String replacement = String.valueOf((char) val);
-                        aLine = aLine.replaceFirst(m, replacement);
+                        if (!EQUALS.equalsIgnoreCase(m)) {
+                            int val = Integer.valueOf(m.substring(1), 16);
+                            String replacement = String.valueOf((char) val);
+                            aLine = aLine.replaceFirst(m, replacement);
+                        }
                     }
-
                 }
 
             } while (match);
+            aLine = aLine.replaceAll("=3[dD]", "=");
         } catch (Exception e) {
             Logger.getLogger(MailUtil.class.getName()).error("Error decoding " + aLine, e);
         }
