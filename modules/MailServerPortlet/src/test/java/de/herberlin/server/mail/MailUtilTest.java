@@ -37,7 +37,7 @@ public class MailUtilTest {
     }
     @Test
     public void decodeEquals() {
-        String s = "editJobNotifications=3Dtrue&confirmEmail=3Da130212c4ce1";
+        String s = "editJobNotifications=3Dtrue&confirmEmail=3Da130212c4ce1=";
         String result = MailUtil.decodeQuotedPrintableLine(s);
         Assert.assertEquals("editJobNotifications=true&confirmEmail=a130212c4ce1", result);
     }

@@ -3,6 +3,7 @@ package de.herberlin.server.mail;
 import de.herberlin.server.Logger;
 
 import java.util.Base64;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +18,11 @@ public class MailUtil {
     private static final Pattern pattern_long = Pattern.compile(".*(=[Cc][2-9]=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
     private static final Pattern pattern_short = Pattern.compile(".*(=[1-9a-fA-F]{2}).*", Pattern.DOTALL);
     private static final String EQUALS = "=3D";
+    private static final String equalsReplacement = UUID.randomUUID().toString();
+
 
     public static String decodeQuotedPrintableLine(String aLine) {
+
         if (aLine == null) {
             return aLine;
         }
@@ -27,7 +31,6 @@ public class MailUtil {
             aLine = aLine.replaceAll("=\\?UTF-8\\?Q\\?", ""); // utf-8 header in subject and addresses
             aLine = aLine.replaceAll("\\?=", "");
             aLine = aLine.replaceAll("_", " ");
-
         }
 
         if (aLine.endsWith("=")) {
@@ -35,6 +38,7 @@ public class MailUtil {
         } else if (!isSubject) {
             aLine += "\n"; // Shorter lines need a real linebreak;
         }
+        aLine = aLine.replaceAll("=3[dD]", equalsReplacement); // remove the equals Sign (=)
 
         boolean match = false;
         try {
@@ -53,16 +57,15 @@ public class MailUtil {
                     match = matcher.matches() && matcher.groupCount() > 0;
                     if (match) {
                         String m = matcher.group(1);
-                        if (!EQUALS.equalsIgnoreCase(m)) {
-                            int val = Integer.valueOf(m.substring(1), 16);
-                            String replacement = String.valueOf((char) val);
-                            aLine = aLine.replaceFirst(m, replacement);
-                        }
+                        int val = Integer.valueOf(m.substring(1), 16);
+                        String replacement = String.valueOf((char) val);
+                        aLine = aLine.replaceFirst(m, replacement);
+
                     }
                 }
 
             } while (match);
-            aLine = aLine.replaceAll("=3[dD]", "=");
+            aLine = aLine.replaceAll(equalsReplacement, "=");
         } catch (Exception e) {
             Logger.getLogger(MailUtil.class.getName()).error("Error decoding " + aLine, e);
         }
