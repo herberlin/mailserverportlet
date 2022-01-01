@@ -1,9 +1,18 @@
-.mail-server-portlet{
+.mail-server-portlet {
   background-color: white;
   padding: 15px;
+
   table.headers {
     tr {
       font-size: small;
+    }
+
+    .box {
+      width: 640px;
+      height: 300px;
+      border: 1px solid silver;
+      resize: both;
+      overflow: auto;
     }
   }
 }

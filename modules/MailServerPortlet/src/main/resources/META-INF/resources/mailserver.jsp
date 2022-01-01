@@ -35,8 +35,9 @@
 		onClick="location.href='${startServerUrl}'" />
 	<aui:button disabled="${not serverRunning }" value="stop-server"
 		onClick="location.href='${stopServerUrl}'" />
-	<aui:button value="refresh" onClick="location.href='${refreshUrl}'" />
 	<aui:button value="testmail" onClick="location.href='${testmailUrl}'" />
+	<aui:button cssClass="btn-primary" value="refresh" onClick="location.href='${refreshUrl}'" />
+
 </aui:button-row>
 
 <liferay-ui:tabs param="configTab" names="log,config" url="${refreshUrl}">
@@ -49,10 +50,11 @@
 		<c:forEach var="event" items="${eventList}" varStatus="varStatus">
 		
 			<div class="mail-server-portlet-mail" >
-				<strong><c:out value="${event.date}"/></strong>
 				<div id="row-${varStatus.index}">
 						
-							<dl  style="margin:5px 0px 10px 18px">
+							<dl  style="margin:5px 0 10px 18px">
+								<dt>Time</dt>
+								<dd><c:out value="${event.date}"/></dd>
 								<dt>From</dt>
 								<dd><c:out value="${event.from}"/></dd>
 								<dt>Subject</dt>
@@ -74,8 +76,8 @@
 
 								<dt>Body</dt>
 								<dd>
-									<textarea class="hide" id="text-${varStatus.index }" style="width:500px;height:100px"><c:out value="${event.mailHeader.content}"/></textarea>
-									<div id="html-${varStatus.index }" style="width:500px; height:100px; border:1px solid silver;resize:both;overflow:auto;">
+									<textarea class="hide box" id="text-${varStatus.index }" ><c:out value="${event.mailHeader.content}"/></textarea>
+									<div id="html-${varStatus.index }" class="box">
 										${event.mailHeader.content}
 									</div>
 									<div><a href="javascript:toggleThings(${varStatus.index })">Toggle Html / Plain</a></div>
@@ -85,6 +87,7 @@
 
 				</div>
 			</div>
+			<hr/>
 		</c:forEach>
 
 	</liferay-ui:section>
